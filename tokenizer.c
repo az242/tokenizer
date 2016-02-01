@@ -8,6 +8,8 @@
  */
 
 struct TokenizerT_ {
+  char[] token;
+  char[] type;
 };
 
 typedef struct TokenizerT_ TokenizerT;
@@ -27,7 +29,7 @@ typedef struct TokenizerT_ TokenizerT;
  */
 
 TokenizerT *TKCreate( char * ts ) {
-
+  
   return NULL;
 }
 
