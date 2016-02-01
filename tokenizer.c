@@ -8,8 +8,16 @@
  */
 
 struct TokenizerT_ {
-  char[] token;
-  char[] type;
+  char* token;
+  char* type;
+  //type is based on strings 
+  /*WORD
+   *DECIMAL
+   *OCTAL
+   *HEXA
+   *FLOAT
+   *COP (C operator)
+   */
 };
 
 typedef struct TokenizerT_ TokenizerT;
@@ -29,8 +37,10 @@ typedef struct TokenizerT_ TokenizerT;
  */
 
 TokenizerT *TKCreate( char * ts ) {
-  
-  return NULL;
+  TokenizerT *temp = (TokenizerT*) malloc(sizeof(TokenizerT));
+  temp->token = ts;
+  temp->type = NULL;
+  return temp;
 }
 
 /*
@@ -41,6 +51,9 @@ TokenizerT *TKCreate( char * ts ) {
  */
 
 void TKDestroy( TokenizerT * tk ) {
+  tk->token = NULL;
+  tk->type = NULL;
+  free(tk);
 }
 
 /*
@@ -68,6 +81,6 @@ char *TKGetNextToken( TokenizerT * tk ) {
  */
 
 int main(int argc, char **argv) {
-
+  
   return 0;
 }
