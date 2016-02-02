@@ -9,14 +9,15 @@
 
 struct TokenizerT_ {
   char* token;
-  char* type;
+  int type;
   //type is based on strings 
-  /*WORD
-   *DECIMAL
-   *OCTAL
-   *HEXA
-   *FLOAT
-   *COP (C operator)
+  /*1.WORD
+   *2.DECIMAL
+   *3.OCTAL
+   *4.HEXA
+   *5.FLOAT
+   *6.COP (C operator)
+   *-1.ERROR
    */
 };
 
@@ -38,8 +39,9 @@ typedef struct TokenizerT_ TokenizerT;
 
 TokenizerT *TKCreate( char * ts ) {
   TokenizerT *temp = (TokenizerT*) malloc(sizeof(TokenizerT));
-  temp->token = ts;
-  temp->type = NULL;
+  temp->token = (char *) malloc(sizeof(strlen(ts)+1));
+  strcpy(temp->token,ts);
+  temp->type = -1;
   return temp;
 }
 
@@ -51,7 +53,7 @@ TokenizerT *TKCreate( char * ts ) {
  */
 
 void TKDestroy( TokenizerT * tk ) {
-  tk->token = NULL;
+  free(tk->token);
   tk->type = NULL;
   free(tk);
 }
@@ -69,7 +71,8 @@ void TKDestroy( TokenizerT * tk ) {
  */
 
 char *TKGetNextToken( TokenizerT * tk ) {
-
+  //Here we will set type value  as well as manipulate the string in TokenizerT Struct
+  //TODO
   return NULL;
 }
 
@@ -81,6 +84,45 @@ char *TKGetNextToken( TokenizerT * tk ) {
  */
 
 int main(int argc, char **argv) {
-  
+  if(argc!=2){
+    printf("Error! More then one input!");
+    return 0;
+  }
+  char* outputStream;
+  TokenizerT* token = TKCreate(argv[1]);
+  while((outputStream = TKGetNextToken(token))!='0'){
+    //while outputStream (which is set to the val of TKGetNextToken) is not 0 THEN
+    switch(token->type){
+      //switch case based on type of token set inside call of TKGetNextToken
+    case 1:
+      printf("Word \"%s\"",outputStream);
+      //word
+      break;
+    case 2:
+      //deciaml
+      printf("decimal integer \"%s\"",outputStream);
+      break;
+    case 3:
+      //octal
+      printf("octal integer \"%s\"",outputStream);
+      break;
+    case 4:
+      //Hexa
+      printf("hexadeciaml integer \"%s\"",outputStream;
+      break;
+    case 5:
+      //Float
+      printf("float point \"%s\"",outputStream);
+      break;
+    case 6:
+      //COP (C Operator)
+	     //TODO
+      break;
+    case -1:
+      //Error!
+      printf("something happened that wasn't suppose to happen!\n");
+      break;
+    }
+  }
   return 0;
 }
