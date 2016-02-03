@@ -10,6 +10,7 @@
 struct TokenizerT_ {
   char* token;
   int type;
+  int index;
   //type is based on strings 
   /*1.WORD
    *2.DECIMAL
@@ -39,9 +40,9 @@ typedef struct TokenizerT_ TokenizerT;
 
 TokenizerT *TKCreate( char * ts ) {
   TokenizerT *temp = (TokenizerT*) malloc(sizeof(TokenizerT));
-  temp->token = (char *) malloc(sizeof(strlen(ts)+1));
-  strcpy(temp->token,ts);
+  temp->token = ts;
   temp->type = -1;
+  temp->index = 0;
   return temp;
 }
 
@@ -53,7 +54,8 @@ TokenizerT *TKCreate( char * ts ) {
  */
 
 void TKDestroy( TokenizerT * tk ) {
-  free(tk->token);
+  tp->index = NULL;
+  tk->token = NULL;
   tk->type = NULL;
   free(tk);
 }
@@ -73,6 +75,14 @@ void TKDestroy( TokenizerT * tk ) {
 char *TKGetNextToken( TokenizerT * tk ) {
   //Here we will set type value  as well as manipulate the string in TokenizerT Struct
   //TODO
+  int stop = 0;
+  tk->type = 0;
+  while(stop!=1){
+    if(tk->token[tk->index].
+    if(tk->token[tk->index]=='0' && tk->token[tk->index+1]=='x'){
+      tk->type=4;
+    }
+  }
   return NULL;
 }
 
