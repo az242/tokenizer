@@ -2,7 +2,7 @@
  * tokenizer.c
  */
 #include <stdio.h>
-
+#include "string.h"
 /*
  * Tokenizer type.  You need to fill in the type as part of your implementation.
  */
@@ -77,12 +77,66 @@ char *TKGetNextToken( TokenizerT * tk ) {
   //TODO
   int stop = 0;
   tk->type = 0;
-  while(stop!=1){
-    if(tk->token[tk->index].
-    if(tk->token[tk->index]=='0' && tk->token[tk->index+1]=='x'){
-      tk->type=4;
+  int beginning = tk->index;
+  //check order
+  if(tk->token[tk->index]=='0' && tk->token[tk->index+1]=='x'){
+    //Hexa
+    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='F')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
+      tk->index++;
     }
+    tk->type=4;
+    char temp[(tk->index-beginning)+1];
+    memcpy(temp, tk[beginning],tk->index-beginning);
+    char temp[tk->index-beginning]='\0';
+    return temp;
+  }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')){
+    //word
+    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<'z')){
+      tk->index++;
+    }
+    char temp[(tk->index-beginning)+1];
+    memcpy(temp,tk[beginning],tk->index-beginning);
+    char temp[tk->index-beginning]='\0';
+    tk->type=1;
+    return temp;
+  }else if(tk->token[tk->index]>='0' && tk->token[tk->index]<='9'){
+    //Octal Decimal or Integer Decimal or FLOAT
+    //TODO
+    
+  }else if(tk->token[tk->index]<'0' || (tk->token[tk->index]>'9' && tk->token[tk-index]<'A') || (tk->token[tk->index]>'Z' && tk->token[tk->index]<'a') || tk->token[tk->index]>'z'){
+    //COP
+    //TODO
+    tk->type = 6;
+    switch(tk->token[tk->index]){//Switch START
+    case '=':
+      if(tk->token[tk->index+1]){
+	//+
+	tk->index++;
+	return "=+";
+      }else if(tk->token[tk->index+1]){
+	//-
+	tk->index++;
+	return "=-";
+      }else if(tk->token[tk->index+1]){
+	//<
+	tk->index++;
+	return "=<";
+      }else if(tk->token[tk->index+1]){
+	//>
+	tk->index++;
+	return "=>";
+      }
+      break;
+    case '<':
+      return "<";
+      break;
+    }//SWITCH END
   }
+  //TEST CODE- this is for spaces, or any other deliminator
+  tk->index++;
+  //if this line of code executes it means
+  //that it did not find a valid token
+  //and is incrementing by 1 until we do
   return NULL;
 }
 
