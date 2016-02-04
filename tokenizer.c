@@ -102,7 +102,34 @@ char *TKGetNextToken( TokenizerT * tk ) {
   }else if(tk->token[tk->index]>='0' && tk->token[tk->index]<='9'){
     //Octal Decimal or Integer Decimal or FLOAT
     //TODO
-    
+    char checker = '7';
+    tk->type = 3;
+    while((tk->token[tk->index]>='0' && tk->token[tk->index]<=checker)){
+      if(tk->token[tk->index+1]>='0' && tk->token[tk->index+1]<='9'){
+	//change to Decimal integer type and continue reading
+	checker = '9';
+	tk->type=2;
+      }else if(tk->token[tk->index+1]=='.'){
+	//change to float type and continue reading
+	if(tk->type!=5){
+	  tk->type = 5;
+	}else{
+	  //means we hit 2 periods in a single token stretch
+	}
+      }else if(tk->token[tk->index+1]=='e' && tk->type==5){
+	//if there is a Exponent
+	if(tk->token[tk->index+2]=='-'){
+	  //if there is a negative exponent
+	  tk->index++;
+	}
+	tk->index++;
+      }
+      tk->index++;
+    }
+    char temp[(tk->index-beginning)+1];
+    memcpy(temp,tk[beginning],tk->index-beginning);
+    char temp[tk->index-beginning]='\0';
+    return temp;
   }else if(tk->token[tk->index]<'0' || (tk->token[tk->index]>'9' && tk->token[tk-index]<'A') || (tk->token[tk->index]>'Z' && tk->token[tk->index]<'a') || tk->token[tk->index]>'z'){
     //COP
     //TODO
