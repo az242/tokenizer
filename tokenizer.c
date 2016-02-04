@@ -75,13 +75,13 @@ void TKDestroy( TokenizerT * tk ) {
 char *TKGetNextToken( TokenizerT * tk ) {
   //Here we will set type value  as well as manipulate the string in TokenizerT Struct
   //TODO
-  int stop = 0;
   tk->type = 0;
   int beginning = tk->index;
   //check order
   if(tk->token[tk->index]=='0' && tk->token[tk->index+1]=='x'){
     //Hexa
     while((tk->token[tk->index]>='A' && tk->token[tk->index]<='F')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
+      //while still a hexa
       tk->index++;
     }
     tk->type=4;
@@ -92,6 +92,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
   }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')){
     //word
     while((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<'z')){
+      //while still a word
       tk->index++;
     }
     char temp[(tk->index-beginning)+1];
