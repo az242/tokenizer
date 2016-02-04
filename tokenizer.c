@@ -6,7 +6,13 @@
 /*
  * Tokenizer type.  You need to fill in the type as part of your implementation.
  */
-
+const int WORD= 1;
+const int DECIMAL=2;
+const int OCTAL = 3;
+const int HEXA = 4;
+const int FLOAT =5;
+const int COP =6;
+const int ERROR=-1; 
 struct TokenizerT_ {
   char* token;
   int type;
@@ -41,7 +47,7 @@ typedef struct TokenizerT_ TokenizerT;
 TokenizerT *TKCreate( char * ts ) {
   TokenizerT *temp = (TokenizerT*) malloc(sizeof(TokenizerT));
   temp->token = ts;
-  temp->type = -1;
+  temp->type =ERROR;
   temp->index = 0;
   return temp;
 }
@@ -84,7 +90,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
       //while still a hexa
       tk->index++;
     }
-    tk->type=4;
+    tk->type=HEXA;
     char temp[(tk->index-beginning)+1];
     memcpy(temp, tk[beginning],tk->index-beginning);
     char temp[tk->index-beginning]='\0';
@@ -98,32 +104,48 @@ char *TKGetNextToken( TokenizerT * tk ) {
     char temp[(tk->index-beginning)+1];
     memcpy(temp,tk[beginning],tk->index-beginning);
     char temp[tk->index-beginning]='\0';
-    tk->type=1;
+    tk->type=WORD;
     return temp;
   }else if(tk->token[tk->index]>='0' && tk->token[tk->index]<='9'){
     //Octal Decimal or Integer Decimal or FLOAT
     //TODO
-    char checker = '7';
-    tk->type = 3;
-    while((tk->token[tk->index]>='0' && tk->token[tk->index]<=checker)){
-      if(tk->token[tk->index+1]>='0' && tk->token[tk->index+1]<='9'){
-	//change to Decimal integer type and continue reading
-	checker = '9';
-	tk->type=2;
-      }else if(tk->token[tk->index+1]=='.'){
-	//change to float type and continue reading
-	if(tk->type!=5){
-	  tk->type = 5;
-	}else{
-	  //means we hit 2 periods in a single token stretch
+    int beginning = tk->index;
+    int foundE=0;
+    tk->type = DECIMAL;
+    if(tk->token[tk->index]=='0'){
+      tk->type = OCTAL;
+    }else if(tk->token[tk->index]=='.'){
+      tk->type = FLOAT;
+      tk->index++;
+    }
+    while((tk->token[tk->index]>='0' && tk->token[tk->index]<='9')||tk->token[tk->index]=='.'){
+      if(tk->type==DECIMAL){
+	if(tk->token[tk->index]=='.'){
+	  tk->type = FLOAT;
 	}
-      }else if(tk->token[tk->index+1]=='e' && tk->type==5){
-	//if there is a Exponent
-	if(tk->token[tk->index+2]=='-'){
-	  //if there is a negative exponent
+      }else if(tk->type==FLOAT){
+	if(tk->token[tk->index]=='.'){
+	  //we hit 2 periods. most likely will end token here
+	  break;
+	}else if(tk->token[tk->index+1]=='e'){
+	  if(foundE==0){
+	    foundE=1;
+	  }else{
+	    break;
+	  }
+	  if(tk->token[tk->index+2]=='-'){
+	    tk->index++;
+	  }
 	  tk->index++;
 	}
-	tk->index++;
+      }else if(tk->type == OCTAL){
+	if(tk->token[tk->index]>'7' && tk->token[tk->index]<='9'){
+	  //end Octal token here
+	  break;
+	}else if(tk->token[tk->index]=='.'){
+	  //end token here
+	  break;
+	}
       }
       tk->index++;
     }
@@ -200,15 +222,15 @@ int main(int argc, char **argv) {
       break;
     case 4:
       //Hexa
-      printf("hexadeciaml integer \"%s\"",outputStream;
+      printf("hexadeciaml integer \"%s\"",outputStream);
       break;
     case 5:
       //Float
       printf("float point \"%s\"",outputStream);
       break;
     case 6:
-      //COP (C Operator)
-	     //TODO
+      //COP 
+      printf("%s",outputStream);
       break;
     case -1:
       //Error!
