@@ -82,22 +82,28 @@ char *TKGetNextToken( TokenizerT * tk ) {
   //Here we will set type value  as well as manipulate the string in TokenizerT Struct
   //TODO
   tk->type = 0;
+  while(tk->token[tk->index]=='\n' || tk->token[tk->index]=='\t' || tk->token[tk->index]==' ' || tk->token[tk->index]=='\v' || tk->token[tk->index]=='\f' || tk->token[tk->index]=='\r'){
+    tk->index++;
+  }
   int beginning = tk->index;
   //check order
   if(tk->token[tk->index]=='0' && tk->token[tk->index+1]=='x'){
     //Hexa
-    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='F')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
+    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='F')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')){
       //while still a hexa
       tk->index++;
     }
     tk->type=HEXA;
+    if(tk->index-beginning==2){
+      return "Bad token 0x";
+    }
     char temp[(tk->index-beginning)+1];
     memcpy(temp, tk[beginning],tk->index-beginning);
     char temp[tk->index-beginning]='\0';
     return temp;
-  }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')){
+  }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
     //word
-    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<'z')){
+    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<'z')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
       //while still a word
       tk->index++;
     }
@@ -128,12 +134,14 @@ char *TKGetNextToken( TokenizerT * tk ) {
 	  //we hit 2 periods. most likely will end token here
 	  break;
 	}else if(tk->token[tk->index+1]=='e'){
+	  //found exponent
 	  if(foundE==0){
 	    foundE=1;
 	  }else{
 	    break;
 	  }
 	  if(tk->token[tk->index+2]=='-'){
+	    //found negative sign
 	    tk->index++;
 	  }
 	  tk->index++;
@@ -159,34 +167,50 @@ char *TKGetNextToken( TokenizerT * tk ) {
     tk->type = 6;
     switch(tk->token[tk->index]){//Switch START
     case '=':
-      if(tk->token[tk->index+1]){
+      if(tk->token[tk->index+1]=='='){
 	//+
 	tk->index++;
-	return "=+";
-      }else if(tk->token[tk->index+1]){
-	//-
-	tk->index++;
-	return "=-";
-      }else if(tk->token[tk->index+1]){
-	//<
-	tk->index++;
-	return "=<";
-      }else if(tk->token[tk->index+1]){
-	//>
-	tk->index++;
-	return "=>";
+	return "==";
+      }else{
+	return "=";
       }
       break;
     case '<':
-      return "<";
+      if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return "<=";
+      }else if(tk->token[tk->index+1]=='<'){
+	tk->index++;
+	if(tk->token[tk->index+2]=='='){
+	  tk->index++;
+	  return "<<=";
+	}else{
+	  return "<<";
+	}
+      }
+      break;
+    case '>':
+      if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return ">=";
+      }else if(tk->token[tk->index+1]=='>'){
+	tk->index++;
+	if(tk->token[tk->index+2]=='='){
+	  tk->index++;
+	  return ">>=";
+	}else{
+	  return ">>";
+	}
+      }
+      break;
+    case default:
+      tk->type = 0;
+      return tk->token[tk->index];
       break;
     }//SWITCH END
+  }else if(tk->token[tk->index]=='\0'){
+    return NULL;
   }
-  //TEST CODE- this is for spaces, or any other deliminator
-  tk->index++;
-  //if this line of code executes it means
-  //that it did not find a valid token
-  //and is incrementing by 1 until we do
   return NULL;
 }
 
@@ -204,7 +228,7 @@ int main(int argc, char **argv) {
   }
   char* outputStream;
   TokenizerT* token = TKCreate(argv[1]);
-  while((outputStream = TKGetNextToken(token))!='0'){
+  while((outputStream = TKGetNextToken(token))!=NULL){
     //while outputStream (which is set to the val of TKGetNextToken) is not 0 THEN
     switch(token->type){
       //switch case based on type of token set inside call of TKGetNextToken
@@ -231,6 +255,9 @@ int main(int argc, char **argv) {
     case 6:
       //COP 
       printf("%s",outputStream);
+      break;
+    case 0:
+      printf("Bad token %s",outputStream);
       break;
     case -1:
       //Error!
