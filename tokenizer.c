@@ -176,6 +176,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
       }
       break;
     case '<':
+      tk->index++;
       if(tk->token[tk->index+1]=='='){
 	tk->index++;
 	return "<=";
@@ -187,9 +188,12 @@ char *TKGetNextToken( TokenizerT * tk ) {
 	}else{
 	  return "<<";
 	}
+      }else{
+	return "<";
       }
       break;
     case '>':
+      tk->index++;
       if(tk->token[tk->index+1]=='='){
 	tk->index++;
 	return ">=";
@@ -201,11 +205,84 @@ char *TKGetNextToken( TokenizerT * tk ) {
 	}else{
 	  return ">>";
 	}
+      }else{
+	return ">";
       }
       break;
+    case '+':
+      tk->index++;
+      if(tk->token[tk->index+1]=='+'){
+	tk->index++;
+	return "++";
+      }else if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return "+=";
+      }else{
+	return "+";
+      }
+      break;
+    case '-':
+      tk->index++;
+      if(tk->token[tk->index+1]=='-'){
+	tk->index++;
+	return "--";
+      }else if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return "-=";
+      }else{
+	return "-";
+      }
+      break;
+    case '*':
+      tk->index++;
+      if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return "*=";
+      }else{
+	return "*";
+      }
+      break;
+    case '/':
+      if(tk->token[tk->index+1]=='/'){
+	//single line comments
+	while(tk->token[tk->index]=='\n' || tk->token[tk->index]!='\0'){
+	  tk->index++;
+	}
+	char temp[(tk->index-beginning)+1];
+	memcpy(temp,tk[beginning],tk->index-beginning);
+	char temp[tk->index-beginning]='\0';
+	return temp;
+	//comments
+      }else if(tk->token[tk->inedx+1]=='*'){
+	//block comment
+      }else{
+	return "/";
+      }
+      break;
+    case '%':
+      break;
+    case '!':
+      break;
+    case '&':
+      break;
+    case '|':
+      break;
+    case '~':
+      break;
+    case '[':
+      break;
+    case ']':
+      break;
+    case '(':
+      break;
+    case ')':
+      break;
+    case ',':
+      break;
     case default:
+      tk->index++;
       tk->type = 0;
-      return tk->token[tk->index];
+      return tk->token[beginning];
       break;
     }//SWITCH END
   }else if(tk->token[tk->index]=='\0'){
