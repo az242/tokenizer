@@ -170,76 +170,76 @@ char *TKGetNextToken( TokenizerT * tk ) {
       if(tk->token[tk->index+1]=='='){
 	//+
 	tk->index++;
-	return "==";
+	return "equal to ==";
       }else{
-	return "=";
+	return "basic assignment =";
       }
       break;
     case '<':
       tk->index++;
       if(tk->token[tk->index+1]=='='){
 	tk->index++;
-	return "<=";
+	return "less than or equal to <=";
       }else if(tk->token[tk->index+1]=='<'){
 	tk->index++;
 	if(tk->token[tk->index+2]=='='){
 	  tk->index++;
-	  return "<<=";
+	  return "bitwise left shift assignment <<=";
 	}else{
-	  return "<<";
+	  return "bitwise left shift <<";
 	}
       }else{
-	return "<";
+	return "less than <";
       }
       break;
     case '>':
       tk->index++;
       if(tk->token[tk->index+1]=='='){
 	tk->index++;
-	return ">=";
+	return "greater than or equal to >=";
       }else if(tk->token[tk->index+1]=='>'){
 	tk->index++;
 	if(tk->token[tk->index+2]=='='){
 	  tk->index++;
-	  return ">>=";
+	  return "bitwise right shift assignment >>=";
 	}else{
-	  return ">>";
+	  return "bitwise right shift >>";
 	}
       }else{
-	return ">";
+	return "greater than >";
       }
       break;
     case '+':
       tk->index++;
       if(tk->token[tk->index+1]=='+'){
 	tk->index++;
-	return "++";
+	return "increment ++";
       }else if(tk->token[tk->index+1]=='='){
 	tk->index++;
-	return "+=";
+	return "addition assignment +=";
       }else{
-	return "+";
+	return "addition +";
       }
       break;
     case '-':
       tk->index++;
       if(tk->token[tk->index+1]=='-'){
 	tk->index++;
-	return "--";
+	return "decrement --";
       }else if(tk->token[tk->index+1]=='='){
 	tk->index++;
-	return "-=";
+	return "subtraction assignment -=";
       }else{
-	return "-";
+	return "subtraction -";
       }
       break;
     case '*':
       tk->index++;
       if(tk->token[tk->index+1]=='='){
 	tk->index++;
-	return "*=";
+	return "multiplication assignment *=";
       }else{
-	return "*";
+	return "multiplication *";
       }
       break;
     case '/':
@@ -256,28 +256,95 @@ char *TKGetNextToken( TokenizerT * tk ) {
       }else if(tk->token[tk->inedx+1]=='*'){
 	//block comment
       }else{
-	return "/";
+	return "division /";
       }
       break;
     case '%':
+      tk->index++;
+      if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return "modulo assignment %=";
+      }else{
+	return "modulo %";
+      }
       break;
     case '!':
+      tk->index++;
+      if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return "not equal to !=";
+      }else{
+	return "logical NOT !";
+      }
       break;
     case '&':
+      tk->index++;
+      if(tk->token[tk->index+1]=='&'){
+	tk->index++;
+	return "logical AND &&";
+      }else if(tk->token[tk->index+1]=='='){
+      	tk->index++;
+      	return "bitwise AND assignment &=";
+      }else{
+	return "bitwise AND &";
+      }
       break;
     case '|':
+      tk->index++;
+      if(tk->token[tk->index+1]=='|'){
+	tk->index++;
+	return "logical OR ||";
+      }else if(tk->token[tk->index+1]=='='){
+	tk->index++;
+	return "bitwise OR assignment |=";
+      }else{
+	return "bitwise OR |";
+      }
       break;
     case '~':
+      tk->index++;
+      return "bitwise NOT ~";
       break;
     case '[':
+      tk->index++;
+      return "left brace [";
       break;
     case ']':
+      tk->index++;
+      return "right brace ]";
       break;
     case '(':
+      tk->index++;
+      return "left parentheses (";
       break;
     case ')':
+      tk->index++;
+      return "right parentheses )";
       break;
     case ',':
+      tk->index++;
+      return "comma ,";
+      break;
+    case '?':
+      tk->index++;
+      if(tk->token[tk->index+1]==':'){
+        tk->index++;
+        return "ternary conditional ?:";
+      }else{		//Have to check if the '?' is followed by an ':'
+      	tk->index++; 	//I'm not sure if this needs to be done again, will check later
+      	tk->type = 0;
+      	return tk->token[beginning];
+      }
+      break;
+    case '^':
+      tk->index++;
+      if(tk->token[tk->index+1]=='='){
+      	tk->index++;
+      	return "bitwise XOR assignment ^=";
+      }
+      else{
+        return "bitwise XOR ^";
+      }
       break;
     case default:
       tk->index++;
@@ -310,7 +377,7 @@ int main(int argc, char **argv) {
     switch(token->type){
       //switch case based on type of token set inside call of TKGetNextToken
     case 1:
-      printf("Word \"%s\"",outputStream);
+      printf("word \"%s\"",outputStream);
       //word
       break;
     case 2:
