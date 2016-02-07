@@ -2,6 +2,7 @@
  * tokenizer.c
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include "string.h"
 /*
  * Tokenizer type.  You need to fill in the type as part of your implementation.
@@ -60,9 +61,6 @@ TokenizerT *TKCreate( char * ts ) {
  */
 
 void TKDestroy( TokenizerT * tk ) {
-  tp->index = NULL;
-  tk->token = NULL;
-  tk->type = NULL;
   free(tk);
 }
 
@@ -81,6 +79,9 @@ void TKDestroy( TokenizerT * tk ) {
 char *TKGetNextToken( TokenizerT * tk ) {
   //Here we will set type value  as well as manipulate the string in TokenizerT Struct
   //TODO
+  if(tk->token[tk->index]=='\0'){
+    return NULL;
+  }
   tk->type = 0;
   while(tk->token[tk->index]=='\n' || tk->token[tk->index]=='\t' || tk->token[tk->index]==' ' || tk->token[tk->index]=='\v' || tk->token[tk->index]=='\f' || tk->token[tk->index]=='\r'){
     tk->index++;
@@ -98,8 +99,8 @@ char *TKGetNextToken( TokenizerT * tk ) {
       return "Bad token 0x";
     }
     char temp[(tk->index-beginning)+1];
-    memcpy(temp, tk[beginning],tk->index-beginning);
-    char temp[tk->index-beginning]='\0';
+    memcpy(temp, tk->token[beginning],(tk->index)-beginning);
+    temp[tk->index-beginning]='\0';
     return temp;
   }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
     //word
@@ -108,8 +109,8 @@ char *TKGetNextToken( TokenizerT * tk ) {
       tk->index++;
     }
     char temp[(tk->index-beginning)+1];
-    memcpy(temp,tk[beginning],tk->index-beginning);
-    char temp[tk->index-beginning]='\0';
+    memcpy(temp,tk->token[beginning],tk->index-beginning);
+    temp[tk->index-beginning]='\0';
     tk->type=WORD;
     return temp;
   }else if(tk->token[tk->index]>='0' && tk->token[tk->index]<='9'){
@@ -158,10 +159,10 @@ char *TKGetNextToken( TokenizerT * tk ) {
       tk->index++;
     }
     char temp[(tk->index-beginning)+1];
-    memcpy(temp,tk[beginning],tk->index-beginning);
-    char temp[tk->index-beginning]='\0';
+    memcpy(temp,tk->token[beginning],tk->index-beginning);
+    temp[tk->index-beginning]='\0';
     return temp;
-  }else if(tk->token[tk->index]<'0' || (tk->token[tk->index]>'9' && tk->token[tk-index]<'A') || (tk->token[tk->index]>'Z' && tk->token[tk->index]<'a') || tk->token[tk->index]>'z'){
+  }else if(tk->token[tk->index]<'0' || (tk->token[tk->index]>'9' && tk->token[tk->index]<'A') || (tk->token[tk->index]>'Z' && tk->token[tk->index]<'a') || tk->token[tk->index]>'z'){
     //COP
     //TODO
     tk->type = 6;
@@ -242,23 +243,24 @@ char *TKGetNextToken( TokenizerT * tk ) {
 	return "multiplication *";
       }
       break;
-    case '/':
+    case '/':{
       if(tk->token[tk->index+1]=='/'){
 	//single line comments
 	while(tk->token[tk->index]=='\n' || tk->token[tk->index]!='\0'){
 	  tk->index++;
 	}
 	char temp[(tk->index-beginning)+1];
-	memcpy(temp,tk[beginning],tk->index-beginning);
-	char temp[tk->index-beginning]='\0';
+	memcpy(temp,tk->token[beginning],tk->index-beginning);
+	temp[tk->index-beginning]='\0';
 	return temp;
 	//comments
-      }else if(tk->token[tk->inedx+1]=='*'){
+      }else if(tk->token[tk->index+1]=='*'){
 	//block comment
       }else{
 	return "division /";
       }
       break;
+    }
     case '%':
       tk->index++;
       if(tk->token[tk->index+1]=='='){
@@ -333,7 +335,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
       }else{		//Have to check if the '?' is followed by an ':'
       	tk->index++; 	//I'm not sure if this needs to be done again, will check later
       	tk->type = 0;
-      	return tk->token[beginning];
+      	return (char)tk->token[beginning];
       }
       break;
     case '^':
@@ -346,14 +348,10 @@ char *TKGetNextToken( TokenizerT * tk ) {
         return "bitwise XOR ^";
       }
       break;
-    case default:
-      tk->index++;
-      tk->type = 0;
-      return tk->token[beginning];
-      break;
     }//SWITCH END
-  }else if(tk->token[tk->index]=='\0'){
-    return NULL;
+    tk->index++;
+    tk->type = 0;
+    return (char)tk->token[beginning];
   }
   return NULL;
 }
