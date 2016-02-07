@@ -90,26 +90,28 @@ char *TKGetNextToken( TokenizerT * tk ) {
   //check order
   if(tk->token[tk->index]=='0' && tk->token[tk->index+1]=='x'){
     //Hexa
-    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='F')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')){
+    tk->index++;tk->index++;
+    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='F')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='f')){
       //while still a hexa
       tk->index++;
     }
     tk->type=HEXA;
     if(tk->index-beginning==2){
-      return "Bad token 0x";
+      tk->type = 0;
+      return "0x";
     }
-    char temp[(tk->index-beginning)+1];
-    memcpy(temp, tk->token[beginning],(tk->index)-beginning);
+    char *temp= (char*) malloc(sizeof(char)*((tk->index-beginning)+1));
+    memcpy(temp, tk->token+beginning,(tk->index)-beginning);
     temp[tk->index-beginning]='\0';
     return temp;
-  }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
+  }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')){
     //word
-    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<'z')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
+    while((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
       //while still a word
       tk->index++;
     }
-    char temp[(tk->index-beginning)+1];
-    memcpy(temp,tk->token[beginning],tk->index-beginning);
+    char *temp = (char*) malloc(sizeof(char)*((tk->index-beginning)+1));
+    memcpy(temp,tk->token+beginning,tk->index-beginning);
     temp[tk->index-beginning]='\0';
     tk->type=WORD;
     return temp;
@@ -158,8 +160,8 @@ char *TKGetNextToken( TokenizerT * tk ) {
       }
       tk->index++;
     }
-    char temp[(tk->index-beginning)+1];
-    memcpy(temp,tk->token[beginning],tk->index-beginning);
+    char *temp = (char*) malloc(sizeof(char)*((tk->index-beginning)+1));
+    memcpy(temp,tk->token+beginning,tk->index-beginning);
     temp[tk->index-beginning]='\0';
     return temp;
   }else if(tk->token[tk->index]<'0' || (tk->token[tk->index]>'9' && tk->token[tk->index]<'A') || (tk->token[tk->index]>'Z' && tk->token[tk->index]<'a') || tk->token[tk->index]>'z'){
@@ -168,190 +170,198 @@ char *TKGetNextToken( TokenizerT * tk ) {
     tk->type = 6;
     switch(tk->token[tk->index]){//Switch START
     case '=':
-      if(tk->token[tk->index+1]=='='){
+      tk->index++;
+      if(tk->token[tk->index]=='='){
 	//+
 	tk->index++;
-	return "equal to ==";
+	return "equal to \"==\"";
       }else{
-	return "basic assignment =";
+	return "basic assignment \"=\"";
       }
       break;
     case '<':
       tk->index++;
-      if(tk->token[tk->index+1]=='='){
+      if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "less than or equal to <=";
-      }else if(tk->token[tk->index+1]=='<'){
+	return "less than or equal to \"<=\"";
+      }else if(tk->token[tk->index]=='<'){
 	tk->index++;
-	if(tk->token[tk->index+2]=='='){
+	if(tk->token[tk->index]=='='){
 	  tk->index++;
-	  return "bitwise left shift assignment <<=";
+	  return "bitwise left shift assignment \"<<=\"";
 	}else{
-	  return "bitwise left shift <<";
+	  return "bitwise left shift \"<<\"";
 	}
       }else{
-	return "less than <";
+	return "less than \"<\"";
       }
       break;
     case '>':
       tk->index++;
-      if(tk->token[tk->index+1]=='='){
+      if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "greater than or equal to >=";
-      }else if(tk->token[tk->index+1]=='>'){
+	return "greater than or equal to \">=\"";
+      }else if(tk->token[tk->index]=='>'){
 	tk->index++;
-	if(tk->token[tk->index+2]=='='){
+	if(tk->token[tk->index]=='='){
 	  tk->index++;
-	  return "bitwise right shift assignment >>=";
+	  return "bitwise right shift assignment \">>=\"";
 	}else{
-	  return "bitwise right shift >>";
+	  return "bitwise right shift \">>\"";
 	}
       }else{
-	return "greater than >";
+	return "greater than \">\"";
       }
       break;
     case '+':
       tk->index++;
-      if(tk->token[tk->index+1]=='+'){
+      if(tk->token[tk->index]=='+'){
 	tk->index++;
-	return "increment ++";
-      }else if(tk->token[tk->index+1]=='='){
+	return "increment \"++\"";
+      }else if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "addition assignment +=";
+	return "addition assignment \"+=\"";
       }else{
-	return "addition +";
+	return "addition \"+\"";
       }
       break;
     case '-':
       tk->index++;
-      if(tk->token[tk->index+1]=='-'){
+      if(tk->token[tk->index]=='-'){
 	tk->index++;
-	return "decrement --";
-      }else if(tk->token[tk->index+1]=='='){
+	return "decrement \"--\"";
+      }else if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "subtraction assignment -=";
+	return "subtraction assignment \"-=\"";
       }else{
-	return "subtraction -";
+	return "subtraction \"-\"";
       }
       break;
     case '*':
       tk->index++;
-      if(tk->token[tk->index+1]=='='){
+      if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "multiplication assignment *=";
+	return "multiplication assignment \"*=\"";
       }else{
-	return "multiplication *";
+	return "multiplication \"*\"";
       }
       break;
-    case '/':{
-      if(tk->token[tk->index+1]=='/'){
+    case '/':
+      tk->index++;
+      if(tk->token[tk->index]=='/'){
+	tk->index++;
 	//single line comments
-	while(tk->token[tk->index]=='\n' || tk->token[tk->index]!='\0'){
+	while(tk->token[tk->index]!='\n' && tk->token[tk->index]!='\0'){
 	  tk->index++;
 	}
-	char temp[(tk->index-beginning)+1];
-	memcpy(temp,tk->token[beginning],tk->index-beginning);
-	temp[tk->index-beginning]='\0';
-	return temp;
+	return TKGetNextToken(tk);
 	//comments
-      }else if(tk->token[tk->index+1]=='*'){
+      }else if(tk->token[tk->index]=='*'){
 	//block comment
+	tk->index++;
+	while(tk->token[tk->index]!='\0'){
+	  if(tk->token[tk->index]=='*' && tk->token[tk->index+1]=='/'){
+	    tk->index = tk->index+2;
+	    break;
+	  }
+	  tk->index++;
+	}
+	return TKGetNextToken(tk);
       }else{
-	return "division /";
+	return "division \"/\"";
       }
       break;
-    }
     case '%':
       tk->index++;
-      if(tk->token[tk->index+1]=='='){
+      if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "modulo assignment %=";
+	return "modulo assignment \"%=\"";
       }else{
 	return "modulo %";
       }
       break;
     case '!':
       tk->index++;
-      if(tk->token[tk->index+1]=='='){
+      if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "not equal to !=";
+	return "not equal to \"!=\"";
       }else{
-	return "logical NOT !";
+	return "logical NOT \"!\"";
       }
       break;
     case '&':
       tk->index++;
-      if(tk->token[tk->index+1]=='&'){
+      if(tk->token[tk->index]=='&'){
 	tk->index++;
-	return "logical AND &&";
-      }else if(tk->token[tk->index+1]=='='){
+	return "logical AND \"&&\"";
+      }else if(tk->token[tk->index]=='='){
       	tk->index++;
-      	return "bitwise AND assignment &=";
+      	return "bitwise AND assignment \"&=\"";
       }else{
-	return "bitwise AND &";
+	return "bitwise AND \"&\"";
       }
       break;
     case '|':
       tk->index++;
-      if(tk->token[tk->index+1]=='|'){
+      if(tk->token[tk->index]=='|'){
 	tk->index++;
-	return "logical OR ||";
-      }else if(tk->token[tk->index+1]=='='){
+	return "logical OR \"||\"";
+      }else if(tk->token[tk->index]=='='){
 	tk->index++;
-	return "bitwise OR assignment |=";
+	return "bitwise OR assignment \"|=\"";
       }else{
-	return "bitwise OR |";
+	return "bitwise OR \"|\"";
       }
       break;
     case '~':
       tk->index++;
-      return "bitwise NOT ~";
+      return "bitwise NOT \"~\"";
       break;
     case '[':
       tk->index++;
-      return "left brace [";
+      return "left brace \"[\"";
       break;
     case ']':
       tk->index++;
-      return "right brace ]";
+      return "right brace \"]\"";
       break;
     case '(':
       tk->index++;
-      return "left parentheses (";
+      return "left parentheses \"(\"";
       break;
     case ')':
       tk->index++;
-      return "right parentheses )";
+      return "right parentheses \")\"";
       break;
     case ',':
       tk->index++;
-      return "comma ,";
+      return "comma \",\"";
       break;
     case '?':
       tk->index++;
       if(tk->token[tk->index+1]==':'){
         tk->index++;
-        return "ternary conditional ?:";
+        return "ternary conditional \"?:\"";
       }else{		//Have to check if the '?' is followed by an ':'
       	tk->index++; 	//I'm not sure if this needs to be done again, will check later
       	tk->type = 0;
-      	return (char)tk->token[beginning];
+      	return tk->token+beginning;
       }
       break;
     case '^':
       tk->index++;
       if(tk->token[tk->index+1]=='='){
       	tk->index++;
-      	return "bitwise XOR assignment ^=";
+      	return "bitwise XOR assignment \"^=\"";
       }
       else{
-        return "bitwise XOR ^";
+        return "bitwise XOR \"^\"";
       }
       break;
     }//SWITCH END
     tk->index++;
     tk->type = 0;
-    return (char)tk->token[beginning];
+    return tk->token+beginning;
   }
   return NULL;
 }
@@ -375,31 +385,36 @@ int main(int argc, char **argv) {
     switch(token->type){
       //switch case based on type of token set inside call of TKGetNextToken
     case 1:
-      printf("word \"%s\"",outputStream);
+      printf("word \"%s\"\n",outputStream);
+      free(outputStream);
       //word
       break;
     case 2:
       //deciaml
-      printf("decimal integer \"%s\"",outputStream);
+      printf("decimal integer \"%s\"\n",outputStream);
+      free(outputStream);
       break;
     case 3:
       //octal
-      printf("octal integer \"%s\"",outputStream);
+      printf("octal integer \"%s\"\n",outputStream);
+      free(outputStream);
       break;
     case 4:
       //Hexa
-      printf("hexadeciaml integer \"%s\"",outputStream);
+      printf("hexadecimal integer \"%s\"\n",outputStream);
+      free(outputStream);
       break;
     case 5:
       //Float
-      printf("float point \"%s\"",outputStream);
+      printf("float point \"%s\"\n",outputStream);
+      free(outputStream);
       break;
     case 6:
       //COP 
-      printf("%s",outputStream);
+      printf("%s\n",outputStream);
       break;
     case 0:
-      printf("Bad token %s",outputStream);
+      printf("Bad token %s\n",outputStream);
       break;
     case -1:
       //Error!
