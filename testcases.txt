@@ -1,0 +1,54 @@
+Andrew Zhu (netid)
+Samuel Yang (sy369)
+
+Assignment 1 Tokenizer Test Cases:
+
+TEST CASE 1 (various types)
+Input: "Hello 456Test 0123 0x4432 .3245"
+
+Output:
+word                "Hello"
+decimal integer     "456"
+word                "Test"
+octal integer       "0123"
+hexadecimal integer "0x4432"
+float point      ".3245"
+
+TEST CASE 2 (largely C operators)
+Input:"hello(**]/=)>>="
+
+Output:
+word                "hello"
+left parentheses    "("
+multiplication      "*"
+multiplication      "*"
+right brace         "]"
+division            "/"
+basic assignment    "="
+right parentheses   ")"
+bitwise right shift assignment  ">>="
+
+TEST CASE 3 (word/hexadecimal tokenizer check)
+Input:"9*9/9-9 hello test0x243"
+
+Output:
+decimal integer     "9"
+multiplication      "*"
+decimal integer     "9"
+division            "/"
+decimal integer     "9"
+subtraction         "-"
+decimal integer     "9"
+word                "hello"
+word                "test0x243"
+
+TEST CASE 4 (white space check)
+Input:"0Xhello 342test as155hi @broken"
+
+Output:
+hexadecimal integer "0x"
+word                "hello"
+decimal integer     "342"
+word                "test"
+word                "as155hi"
+Bad Token           "@"
