@@ -1,0 +1,14 @@
+Andrew Zhu (az242)
+Samuel Yang (sy369)
+
+Assignment 1 Tokenizer: Read me
+
+This assignment involves analyzing any string and being able to break down and interpret the string
+in order to properly interpret and classify certain sequences of strings.  When intaking a string, the
+program is intended to break down strings into words, decimal integers, octal integers, hexadecimal integers,
+floating point, and various c operators.  The program needed to properly interpret blank spaces as
+separations in tokens, as well as certain orders of charcters that would only be properly read as separate
+tokens.  The program then outputs the name of the type of the word, as well as the string of characters 
+that are encompassed by that particiular token.  Through this assignment, students were expected to 
+increase their understanding and use of pointers, and allocations of memory in the C programming language.  
+
