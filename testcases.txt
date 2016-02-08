@@ -65,3 +65,10 @@ ternary conditional "?:"
 float point "48.10"
 float point "3.14e-3"
 logical AND "&&"
+
+TEST CASE 6 (breaking)
+Input:"hel{}asdfhlkga"
+
+Output:
+word "hel"
+Bad Token "{"
