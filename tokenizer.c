@@ -13,7 +13,9 @@ const int OCTAL = 3;
 const int HEXA = 4;
 const int FLOAT =5;
 const int COP =6;
-const int ERROR=-1; 
+const int ERROR=-1;
+const int BAD_TOKEN= 0;
+const int QUOTE = 7;
 struct TokenizerT_ {
   char* token;
   int type;
@@ -106,6 +108,154 @@ char *TKGetNextToken( TokenizerT * tk ) {
     return temp;
   }else if((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')){
     //word
+    if(strncmp("if",tk->token+beginning,2)==0){
+      //if
+      tk->index=tk->index+2;
+      tk->type = COP;
+      return "C Key Word \"if\"";
+    }else if(strncmp("sizeof",tk->token+beginning,6)==0){
+      //sizeof
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"sizeof\"";
+    }else if(strncmp("while",tk->token+beginning,5)==0){
+      //while
+      tk->index=tk->index+5;
+      tk->type = COP;
+      return "C Key Word \"while\"";
+    }else if(strncmp("for",tk->token+beginning,3)==0){
+      //for
+      tk->index=tk->index+3;
+      tk->type = COP;
+      return "C Key Word \"for\"";
+    }else if(strncmp("else",tk->token+beginning,4)==0){
+      //else
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"else\"";
+    }else if(strncmp("return",tk->token+beginning,6)==0){
+      //return
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"return\"";
+    }else if(strncmp("switch",tk->token+beginning,6)==0){
+      //switch
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"switch\"";
+    }else if(strncmp("case",tk->token+beginning,4)==0){
+      //case
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"case\"";
+    }else if(strncmp("int",tk->token+beginning,3)==0){
+      //int
+      tk->index=tk->index+3;
+      tk->type = COP;
+      return "C Key Word \"int\"";
+    }else if(strncmp("char",tk->token+beginning,4)==0){
+      //char
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"char\"";
+    }else if(strncmp("double",tk->token+beginning,6)==0){
+      //double
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"double\"";
+    }else if(strncmp("float",tk->token+beginning,5)==0){
+      //float
+      tk->index=tk->index+5;
+      tk->type = COP;
+      return "C Key Word \"float\"";
+    }else if(strncmp("short",tk->token+beginning,5)==0){
+      //short
+      tk->index=tk->index+5;
+      tk->type = COP;
+      return "C Key Word \"short\"";
+    }else if(strncmp("static",tk->token+beginning,6)==0){
+      //static
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"static\"";
+    }else if(strncmp("struct",tk->token+beginning,6)==0){
+      //struct
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"struct\"";
+    }else if(strncmp("union",tk->token+beginning,5)==0){
+      //union
+      tk->index=tk->index+5;
+      tk->type = COP;
+      return "C Key Word \"union\"";
+    }else if(strncmp("enum",tk->token+beginning,4)==0){
+      //enum
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"enum\"";
+    }else if(strncmp("do",tk->token+beginning,2)==0){
+      //do
+      tk->index=tk->index+2;
+      tk->type = COP;
+      return "C Key Word \"do\"";
+    }else if(strncmp("continue",tk->token+beginning,8)==0){
+      //continue
+      tk->index=tk->index+8;
+      tk->type = COP;
+      return "C Key Word \"continue\"";
+    }else if(strncmp("default",tk->token+beginning,7)==0){
+      //default
+      tk->index=tk->index+7;
+      tk->type = COP;
+      return "C Key Word \"default\"";
+    }else if(strncmp("extern",tk->token+beginning,6)==0){
+      //extern
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"extern\"";
+    }else if(strncmp("break",tk->token+beginning,5)==0){
+      //break
+      tk->index=tk->index+5;
+      tk->type = COP;
+      return "C Key Word \"break\"";
+    }else if(strncmp("goto",tk->token+beginning,4)==0){
+      
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"goto\"";
+    }else if(strncmp("void",tk->token+beginning,4)==0){
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"void\"";
+    }else if(strncmp("const",tk->token+beginning,5)==0){
+      tk->index=tk->index+5;
+      tk->type = COP;
+      return "C Key Word \"const\"";
+    }else if(strncmp("signed",tk->token+beginning,6)==0){
+      tk->index=tk->index+6;
+      tk->type = COP;
+      return "C Key Word \"signed\"";
+    }else if(strncmp("volatile",tk->token+beginning,8)==0){
+      tk->index=tk->index+8;
+      tk->type = COP;
+      return "C Key Word \"volatile\"";
+    }else if(strncmp("auto",tk->token+beginning,4)==0){
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"auto\"";
+    }else if(strncmp("long",tk->token+beginning,4)==0){
+      tk->index=tk->index+4;
+      tk->type = COP;
+      return "C Key Word \"long\"";
+    }else if(strncmp("typedef",tk->token+beginning,7)==0){
+      tk->index=tk->index+7;
+      tk->type = COP;
+      return "C Key Word \"typedef\"";
+    }else if(strncmp("unsigned",tk->token+beginning,8)==0){
+      tk->index=tk->index+8;
+      tk->type = COP;
+      return "C Key Word \"unsigned\"";
+    }
     while((tk->token[tk->index]>='A' && tk->token[tk->index]<='Z')||(tk->token[tk->index]>='a' && tk->token[tk->index]<='z')||(tk->token[tk->index]>='0' && tk->token[tk->index]<='9')){
       //while still a word
       tk->index++;
@@ -167,7 +317,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
   }else if(tk->token[tk->index]<'0' || (tk->token[tk->index]>'9' && tk->token[tk->index]<'A') || (tk->token[tk->index]>'Z' && tk->token[tk->index]<'a') || tk->token[tk->index]>'z'){
     //COP
     //TODO
-    tk->type = 6;
+    tk->type = COP;
     switch(tk->token[tk->index]){//Switch START
     case '=':
       tk->index++;
@@ -233,6 +383,8 @@ char *TKGetNextToken( TokenizerT * tk ) {
       }else if(tk->token[tk->index]=='='){
 	tk->index++;
 	return "subtraction assignment \"-=\"";
+      }else if(tk->token[tk->index]=='>'){
+	
       }else{
 	return "subtraction \"-\"";
       }
@@ -344,7 +496,7 @@ char *TKGetNextToken( TokenizerT * tk ) {
         return "ternary conditional \"?:\"";
       }else{		//Have to check if the '?' is followed by an ':'
       	tk->index++; 	//I'm not sure if this needs to be done again, will check later
-      	tk->type = 0;
+      	tk->type = BAD_TOKEN;
       	return tk->token+beginning;
       }
       break;
@@ -358,9 +510,55 @@ char *TKGetNextToken( TokenizerT * tk ) {
         return "bitwise XOR \"^\"";
       }
       break;
+    case '"':{
+      beginning = tk->index;
+      tk->index++;
+      int foundQuotes=0;
+      while(tk->token[tk->index]!='"' && tk->token[tk->index]!='\0'){
+	tk->index++;
+	if(tk->token[tk->index]=='"'){
+	  foundQuotes=1;
+	}
+      }
+      if(foundQuotes==1){
+	tk->index++;
+	tk->type = QUOTE;
+	char *temp = (char*) malloc(sizeof(char)*((tk->index-beginning)+1));
+	memcpy(temp,tk->token+beginning,tk->index-beginning);
+	temp[tk->index-beginning]='\0';
+	return temp;
+      }else{
+	tk->index=beginning+1;
+	return "Quote \"\"\"";
+      }
+      break;
+    }
+    case '\'':{
+      beginning = tk->index;
+      tk->index++;
+      int foundQ = 0;
+      while(tk->token[tk->index]!='\'' && tk->token[tk->index]!='\0'){
+	tk->index++;
+	if(tk->token[tk->index]=='\''){
+	  foundQ=1;
+	}
+      }
+      if(foundQ==1){
+	tk->index++;
+	tk->type = QUOTE;
+	char *temp = (char*) malloc(sizeof(char)*((tk->index-beginning)+1));
+	memcpy(temp, tk->token+beginning, tk->index-beginning);
+	temp[tk->index-beginning]='\0';
+	return temp;
+      }else{
+	tk->index=beginning+1;
+	return "Single Quote \"\'\"";
+      }
+      break;
+    }
     }//SWITCH END
     tk->index++;
-    tk->type = 0;
+    tk->type = BAD_TOKEN;
     return tk->token+beginning;
   }
   return NULL;
@@ -413,8 +611,13 @@ int main(int argc, char **argv) {
       //COP 
       printf("%s\n",outputStream);
       break;
+    case 7:
+      //quote
+      printf("String %s\n",outputStream);
+      free(outputStream);
+      break;
     case 0:
-      printf("Bad token %s\n",outputStream);
+      printf("Bad token %c\n",outputStream);
       break;
     case -1:
       //Error!
