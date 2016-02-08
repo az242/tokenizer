@@ -52,3 +52,16 @@ decimal integer     "342"
 word                "test"
 word                "as155hi"
 Bad Token           "@"
+
+TEST CASE 5 (more C operators and special cases)
+Input:"if while return spiff?: 48.10 3.14e-3 &&"
+
+Output:
+C Key Word "if"
+C Key Word "while"
+C Key Word "return"
+word "spiff"
+ternary conditional "?:"
+float point "48.10"
+float point "3.14e-3"
+logical AND "&&"
