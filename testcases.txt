@@ -1,4 +1,4 @@
-Andrew Zhu (netid)
+Andrew Zhu (az242)
 Samuel Yang (sy369)
 
 Assignment 1 Tokenizer Test Cases:
